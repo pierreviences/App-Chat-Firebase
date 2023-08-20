@@ -1,4 +1,4 @@
-package com.example.chatapp
+package com.example.chatapp.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
