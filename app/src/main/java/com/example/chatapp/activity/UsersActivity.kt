@@ -43,6 +43,12 @@ class UsersActivity : AppCompatActivity() {
         binding.imgBack.setOnClickListener{
             onBackPressed()
         }
+
+        binding.imgProfile.setOnClickListener {
+            val intent = Intent(this@UsersActivity, UsersActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         getUserList()
 
     }
