@@ -52,6 +52,11 @@ class SignUpActivity : AppCompatActivity() {
             registerUser(userName, email, password)
         }
 
+        binding.btnLogin.setOnClickListener {
+            val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 
@@ -69,7 +74,14 @@ class SignUpActivity : AppCompatActivity() {
 
                     databaseReference.setValue(hashMap).addOnCompleteListener(this){
                         if(it.isSuccessful){
+                            binding.etName.setText("")
+                            binding.etEmail.setText("")
+                            binding.etPassword.setText("")
+                            binding.etConfirmPassword.setText("")
                             val intent = Intent(this@SignUpActivity, HomeActivity::class.java)
+                            startActivity(intent)
+                        }else {
+                            Toast.makeText(this, "Gagal Daftar", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
