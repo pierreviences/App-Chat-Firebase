@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.adapter.UserAdapter
 import com.example.chatapp.databinding.ActivityLoginBinding
@@ -45,7 +46,7 @@ class UsersActivity : AppCompatActivity() {
         }
 
         binding.imgProfile.setOnClickListener {
-            val intent = Intent(this@UsersActivity, UsersActivity::class.java)
+            val intent = Intent(this@UsersActivity, ProfileActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -59,6 +60,13 @@ class UsersActivity : AppCompatActivity() {
         databaseReference.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 userList.clear()
+                val currentUser = snapshot.getValue(User::class.java)
+                if (currentUser!!.userImage == ""){
+                    binding.imgProfile.setImageResource(R.drawable.profile_image)
+                }else{
+                    Glide.with(this@UsersActivity).load(currentUser.userImage).into(binding.imgProfile)
+                }
+
                 for(dataSnapShot:DataSnapshot in snapshot.children){
                     val user = dataSnapShot.getValue(User::class.java)
                     if(!user!!.userId.equals(firebase.uid)){

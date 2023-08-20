@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.databinding.ActivityProfileBinding
 import com.example.chatapp.databinding.ActivityUsersBinding
@@ -27,12 +28,18 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
-        databaseReference  = FirebaseDatabase.getInstance().getReference().child(firebaseUser.uid)
+        databaseReference  = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.uid)
         databaseReference.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java)
-                binding.etUserName.text = user!!.userName
+                binding.etUserName.setText(user?.userName)
 
+                if(user!!.userImage == ""){
+                    binding.userImage.setImageResource(R.drawable.profile_image)
+                }else{
+                    Glide.with(this@ProfileActivity).load(user.userImage).into(binding.userImage)
+
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -45,10 +52,5 @@ class ProfileActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        binding.imgProfile.setOnClickListener {
-            val intent = Intent(this@ProfileActivity, UsersActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
     }
 }
