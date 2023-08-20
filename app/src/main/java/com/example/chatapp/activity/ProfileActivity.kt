@@ -86,22 +86,20 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-    private fun chooseImage(){
-        val intent: Intent = Intent()
-        intent.type =  "image/"
-        intent.action  = Intent.ACTION_GET_CONTENT
+    private fun chooseImage() {
+        val intent: Intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode != null){
-            filePath = data!!.data
-            try{
-                var bitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
+            filePath = data.data
+            try {
+                val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
                 binding.userImage.setImageBitmap(bitmap)
                 binding.btnSave.visibility = View.VISIBLE
-            }catch (e: IOException){
+            } catch (e: IOException) {
                 e.printStackTrace()
             }
         }

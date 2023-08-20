@@ -20,13 +20,12 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        if (auth != null) {
-            firebaseUser = auth!!.currentUser!!
-            if (firebaseUser != null) {
-                val intent = Intent(this@LoginActivity, UsersActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
+        firebaseUser = auth.currentUser!!
+
+        if (firebaseUser != null) {
+            val intent = Intent(this@LoginActivity, UsersActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         binding.btnLogin.setOnClickListener {
