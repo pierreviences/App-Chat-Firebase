@@ -49,9 +49,13 @@ class ProfileActivity : AppCompatActivity() {
         })
 
         binding.imgBack.setOnClickListener{
+<<<<<<< HEAD
             val intent = Intent(this@ProfileActivity, UsersActivity::class.java)
             startActivity(intent)
             finish()
+=======
+            onBackPressed()
+>>>>>>> e92ad03229dd2bf64e03a684ff8c8a79b097a061
         }
 
     }
