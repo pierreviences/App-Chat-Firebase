@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
                         if(it.isSuccessful){
                             binding.etEmail.setText("")
                             binding.etPassword.setText("")
-                            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+                            val intent = Intent(this@LoginActivity, UsersActivity::class.java)
                             startActivity(intent)
                         }else{
                             Toast.makeText(applicationContext, "Email and Password invalid", Toast.LENGTH_SHORT).show()
