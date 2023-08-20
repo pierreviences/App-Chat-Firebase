@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
@@ -55,10 +56,10 @@ class ProfileActivity : AppCompatActivity() {
                 val user = snapshot.getValue(User::class.java)
                 binding.etUserName.setText(user?.userName)
 
-                if(user!!.userImage == ""){
+                if(user!!.profileImage== ""){
                     binding.userImage.setImageResource(R.drawable.profile_image)
                 }else{
-                    Glide.with(this@ProfileActivity).load(user.userImage).into(binding.userImage)
+                    Glide.with(this@ProfileActivity).load(user.profileImage).into(binding.userImage)
 
                 }
             }
@@ -73,6 +74,14 @@ class ProfileActivity : AppCompatActivity() {
             val intent = Intent(this@ProfileActivity, UsersActivity::class.java)
             startActivity(intent)
             finish()
+        }
+
+        binding.userImage.setOnClickListener {
+            chooseImage()
+        }
+
+        binding.btnSave.setOnClickListener {
+            uploadImage()
         }
 
     }
@@ -91,6 +100,7 @@ class ProfileActivity : AppCompatActivity() {
             try{
                 var bitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
                 binding.userImage.setImageBitmap(bitmap)
+                binding.btnSave.visibility = View.VISIBLE
             }catch (e: IOException){
                 e.printStackTrace()
             }
@@ -99,31 +109,28 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun uploadImage(){
         if(filePath != null){
-            val progressDialog: ProgressDialog = ProgressDialog(null)
-            progressDialog.setTitle("Uploading...")
-            progressDialog.show()
 
+            binding.progressBar.visibility = View.VISIBLE
             var ref: StorageReference = storageRef.child("image/" + UUID.randomUUID().toString())
             ref.putFile(filePath!!)
                 .addOnSuccessListener {
-                    OnSuccessListener<UploadTask.TaskSnapshot>{
-                        progressDialog.dismiss()
-                        Toast.makeText(applicationContext,"Uploaded", Toast.LENGTH_SHORT).show()
-                    }
+
+                    val hashMap: HashMap<String, String> = HashMap()
+                    hashMap.put("userName", binding.etUserName.text.toString())
+                    hashMap.put("profileImage", filePath.toString())
+                    databaseReference.updateChildren(hashMap as Map<String, Any>)
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(applicationContext,"Uploaded", Toast.LENGTH_SHORT).show()
+                    binding.btnSave.visibility = View.GONE
+
                 }
                 .addOnFailureListener{
-                    OnFailureListener{
-                        progressDialog.dismiss()
+                        binding.progressBar.visibility = View.GONE
                         Toast.makeText(applicationContext,"Failed" + it.message, Toast.LENGTH_SHORT).show()
-                    }
+
                 }
 
-                .addOnProgressListener {
-                    OnProgressListener<UploadTask.TaskSnapshot>{
-                        var progress: Double = (100.0*it.bytesTransferred/it.totalByteCount)
-                        progressDialog.setMessage("Uploaded" + progress.toInt()+"%")
-                    }
-                }
+
             }
     }
 }
