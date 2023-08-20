@@ -2,9 +2,11 @@ package com.example.chatapp.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.adapter.UserAdapter
 import com.example.chatapp.databinding.ActivityLoginBinding
@@ -26,23 +28,22 @@ class UsersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val firebase: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
+        binding.userRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
-        binding.userRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        var userList = ArrayList<User>()
-
+// DATA DUMMY
 //        userList.add(User("yazid", "https://s.gravatar.com/avatar/af1318eb84ea7805042829d24456597f?s=200"))
 //        userList.add(User("yazid", "https://s.gravatar.com/avatar/af1318eb84ea7805042829d24456597f?s=200"))
 //        userList.add(User("yazid", "https://s.gravatar.com/avatar/af1318eb84ea7805042829d24456597f?s=200"))
 //        var userAdapter = UserAdapter(this, userList)
 //        binding.userRecyclerView.adapter = userAdapter
-
         getUserList()
 
     }
 
     fun getUserList(){
         val firebase: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
-        var databaseReference: DatabaseReference = FirebaseDatabase.getInstance("Users").getReference("Users")
+        var databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("users")
         databaseReference.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 userList.clear()
@@ -52,12 +53,14 @@ class UsersActivity : AppCompatActivity() {
                         userList.add(user)
                     }
                 }
+
                 val userAdapter = UserAdapter(this@UsersActivity, userList)
                 binding.userRecyclerView.adapter = userAdapter
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(applicationContext, error.message, Toast.LENGTH_SHORT).show()
+                Log.e("FirebaseError", error.message)
             }
 
         })
