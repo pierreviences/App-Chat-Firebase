@@ -19,6 +19,24 @@ class SignUpActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
     }
 
+    private fun registerUser(userName: String,email:String, password: String){
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this){
+                if(it.isSuccessful){
+                    val user: FirebaseUser? = auth.currentUser
+                    val userId: String = user!!.uid
+                    databaseReference = FirebaseDatabase.getInstance().getReference("users").child(userId)
+                    val hashMap: HashMap<String, String> = HashMap()
+                    hashMap.put("userId", userId)
+                    hashMap.put("userName", userName)
+                    hashMap.put("profileImage", "")
 
-
+                    databaseReference.setValue(hashMap).addOnCompleteListener(this){
+                        if(it.isSuccessful){
+                            val intent = Intent(this@SignUpActivity, HomeActivity::class.java)
+                        }
+                    }
+                }
+            }
+    }
 }
