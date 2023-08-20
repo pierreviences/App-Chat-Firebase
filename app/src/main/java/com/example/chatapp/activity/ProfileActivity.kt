@@ -1,8 +1,11 @@
 package com.example.chatapp.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
@@ -16,12 +19,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.io.IOException
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
 
     private lateinit var firebaseUser: FirebaseUser
     private lateinit var databaseReference: DatabaseReference
+
+    private var filePath: Uri? = null
+    private val PICK_IMAGE_REQUEST:Int = 2020
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
@@ -49,14 +56,30 @@ class ProfileActivity : AppCompatActivity() {
         })
 
         binding.imgBack.setOnClickListener{
-<<<<<<< HEAD
             val intent = Intent(this@ProfileActivity, UsersActivity::class.java)
             startActivity(intent)
             finish()
-=======
-            onBackPressed()
->>>>>>> e92ad03229dd2bf64e03a684ff8c8a79b097a061
         }
 
+    }
+
+    private fun chooseImage(){
+        val intent: Intent = Intent()
+        intent.type =  "image/"
+        intent.action  = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode != null){
+            filePath = data!!.data
+            try{
+                var bitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filePath)
+                binding.userImage.setImageBitmap(bitmap)
+            }catch (e: IOException){
+                e.printStackTrace()
+            }
+        }
     }
 }
