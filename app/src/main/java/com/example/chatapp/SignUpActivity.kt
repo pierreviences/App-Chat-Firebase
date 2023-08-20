@@ -31,13 +31,25 @@ class SignUpActivity : AppCompatActivity() {
             val confirmPassword = binding.etConfirmPassword.text.toString()
 
             if(TextUtils.isEmpty(userName)){
-                Toast.makeText(applicationContext ,"Username is inavlid", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext ,"Username is required", Toast.LENGTH_SHORT).show()
             }
             if(TextUtils.isEmpty(email)){
-                Toast.makeText(applicationContext ,"Username is inavlid", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext ,"Email is required", Toast.LENGTH_SHORT).show()
+            }
+            if(TextUtils.isEmpty(password)){
+                Toast.makeText(applicationContext ,"Password is required", Toast.LENGTH_SHORT).show()
             }
 
-            registerUser()
+            if(TextUtils.isEmpty(confirmPassword)){
+                Toast.makeText(applicationContext ,"Confirm Password is required", Toast.LENGTH_SHORT).show()
+            }
+
+            if(!password.equals(confirmPassword)){
+                Toast.makeText(applicationContext ,"Password not match", Toast.LENGTH_SHORT).show()
+            }
+
+
+            registerUser(userName, email, password)
         }
 
 
