@@ -20,10 +20,13 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        firebaseUser = auth.currentUser!!
-        if(firebaseUser != null){
-            val intent = Intent(this@LoginActivity, UsersActivity::class.java)
-            startActivity(intent)
+        if (auth != null) {
+            firebaseUser = auth!!.currentUser!!
+            if (firebaseUser != null) {
+                val intent = Intent(this@LoginActivity, UsersActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
 
         binding.btnLogin.setOnClickListener {
@@ -41,6 +44,7 @@ class LoginActivity : AppCompatActivity() {
                             binding.etPassword.setText("")
                             val intent = Intent(this@LoginActivity, UsersActivity::class.java)
                             startActivity(intent)
+                            finish()
                         }else{
                             Toast.makeText(applicationContext, "Email and Password invalid", Toast.LENGTH_SHORT).show()
                         }

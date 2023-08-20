@@ -55,6 +55,7 @@ class SignUpActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
 
@@ -80,6 +81,7 @@ class SignUpActivity : AppCompatActivity() {
                             binding.etConfirmPassword.setText("")
                             val intent = Intent(this@SignUpActivity, UsersActivity::class.java)
                             startActivity(intent)
+                            finish()
                         }
                     }
                 }else {

@@ -1,10 +1,12 @@
 package com.example.chatapp.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
@@ -28,7 +30,7 @@ class UsersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val firebase: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
+
         binding.userRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
 // DATA DUMMY
@@ -37,6 +39,10 @@ class UsersActivity : AppCompatActivity() {
 //        userList.add(User("yazid", "https://s.gravatar.com/avatar/af1318eb84ea7805042829d24456597f?s=200"))
 //        var userAdapter = UserAdapter(this, userList)
 //        binding.userRecyclerView.adapter = userAdapter
+
+        binding.imgBack.setOnClickListener{
+            onBackPressed()
+        }
         getUserList()
 
     }
@@ -65,4 +71,5 @@ class UsersActivity : AppCompatActivity() {
 
         })
     }
+
 }
