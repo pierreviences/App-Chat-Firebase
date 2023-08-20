@@ -81,7 +81,7 @@ class SignUpActivity : AppCompatActivity() {
                             val intent = Intent(this@SignUpActivity, HomeActivity::class.java)
                             startActivity(intent)
                         }else {
-                            Toast.makeText(this, "Gagal Daftar", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext ,"GAGAL DAFTAR", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
