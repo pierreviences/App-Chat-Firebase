@@ -80,10 +80,11 @@ class SignUpActivity : AppCompatActivity() {
                             binding.etConfirmPassword.setText("")
                             val intent = Intent(this@SignUpActivity, HomeActivity::class.java)
                             startActivity(intent)
-                        }else {
-                            Toast.makeText(applicationContext ,"GAGAL DAFTAR", Toast.LENGTH_SHORT).show()
                         }
                     }
+                }else {
+                    Toast.makeText(applicationContext, it.exception?.message, Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
