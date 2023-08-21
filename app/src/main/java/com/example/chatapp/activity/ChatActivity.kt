@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
+import com.example.chatapp.RetrofitInstance
 import com.example.chatapp.adapter.ChatAdapter
 import com.example.chatapp.adapter.UserAdapter
 import com.example.chatapp.databinding.ActivityChatBinding
 import com.example.chatapp.databinding.ActivityUsersBinding
 import com.example.chatapp.model.Chat
+import com.example.chatapp.model.NotificationData
+import com.example.chatapp.model.PushNotification
 import com.example.chatapp.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -22,6 +25,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ChatActivity : AppCompatActivity() {
 
@@ -30,6 +37,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
 
     var chatList = ArrayList<Chat>()
+    var topic = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -74,6 +82,12 @@ class ChatActivity : AppCompatActivity() {
             }else{
                 sendMessage(firebaseUser!!.uid,userId,message)
                 binding.etMessage.setText("")
+                topic = "topics/$userId"
+                PushNotification(NotificationData(firebaseUser!!.displayName!!, message),
+                    topic).also{
+                        sendNotification(it)
+                }
+
             }
         }
 
@@ -118,5 +132,19 @@ class ChatActivity : AppCompatActivity() {
                 binding.chatRecyclerView.adapter = chatAdapter
             }
         })
+    }
+
+    private fun sendNotification(notification:PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try{
+            val response = RetrofitInstance.api.pushNotification(notification)
+            if(response.isSuccessful){
+                Toast.makeText(this@ChatActivity,"Response ${Gson().toJson(response)}", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this@ChatActivity,response.errorBody().toString(), Toast.LENGTH_SHORT).show()
+            }
+        }catch(e:Exception){
+            Toast.makeText(this@ChatActivity,e.message, Toast.LENGTH_SHORT).show()
+
+        }
     }
 }
