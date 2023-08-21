@@ -41,8 +41,24 @@ class UsersActivity : AppCompatActivity() {
 //        var userAdapter = UserAdapter(this, userList)
 //        binding.userRecyclerView.adapter = userAdapter
 
+
+        val auth = FirebaseAuth.getInstance()
         binding.imgBack.setOnClickListener{
-            onBackPressed()
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("Logout")
+            alertDialogBuilder.setMessage("Apakah Anda yakin ingin logout?")
+            alertDialogBuilder.setPositiveButton("Ya") { _, _ ->
+                auth.signOut()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+            alertDialogBuilder.setNegativeButton("Tidak") { dialog, _ ->
+                dialog.dismiss()
+            }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
         }
 
         binding.imgProfile.setOnClickListener {
