@@ -3,6 +3,7 @@ package com.example.chatapp.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.databinding.ActivityChatBinding
@@ -53,6 +54,15 @@ class ChatActivity : AppCompatActivity() {
 
             }
             )
+
+        binding.btnSendMessage.setOnClickListener {
+            var message: String = binding.etMessage.text.toString()
+            if(message.isEmpty()){
+                Toast.makeText(applicationContext,"", Toast.LENGTH_SHORT).show()
+            }else{
+                sendMessage(firebaseUser!!.uid,userId,message)
+            }
+        }
 
     }
 
