@@ -39,7 +39,7 @@ class UserAdapter(private val context: Context, private val userList:ArrayList<U
 
         holder.layoutUser.setOnClickListener {
             val intent  = Intent(context, ChatActivity::class.java)
-            intent.putExtra("UserId",user.userId)
+            intent.putExtra("userId",user.userId)
             context.startActivity(intent)
         }
     }
