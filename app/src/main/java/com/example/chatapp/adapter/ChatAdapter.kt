@@ -54,9 +54,9 @@ class ChatAdapter(private val context: Context, private val chatList:ArrayList<C
         firebaseUser = FirebaseAuth.getInstance().currentUser
         if(chatList[position].senderId == firebaseUser!!.uid)
         {
-            return MESSAGE_TYPE_LEFT
-        }else{
             return MESSAGE_TYPE_RIGHT
+        }else{
+            return MESSAGE_TYPE_LEFT
         }
     }
 }

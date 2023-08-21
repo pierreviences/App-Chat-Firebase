@@ -22,12 +22,12 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         // ntr dicomment
-        if (auth != null) {
-            firebaseUser = auth.currentUser!!
-            val intent = Intent(this@LoginActivity, UsersActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+//        if (auth != null) {
+//            firebaseUser = auth.currentUser!!
+//            val intent = Intent(this@LoginActivity, UsersActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
 
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString()

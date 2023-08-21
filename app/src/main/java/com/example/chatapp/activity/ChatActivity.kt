@@ -3,9 +3,14 @@ package com.example.chatapp.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
+import com.example.chatapp.adapter.ChatAdapter
+import com.example.chatapp.adapter.UserAdapter
 import com.example.chatapp.databinding.ActivityChatBinding
 import com.example.chatapp.databinding.ActivityUsersBinding
 import com.example.chatapp.model.Chat
@@ -29,6 +34,8 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.chatRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         val intent = getIntent()
         val userId = intent.getStringExtra("userId")
@@ -62,11 +69,15 @@ class ChatActivity : AppCompatActivity() {
             var message: String = binding.etMessage.text.toString()
             if(message.isEmpty()){
                 Toast.makeText(applicationContext,"", Toast.LENGTH_SHORT).show()
+                binding.etMessage.setText("")
+
             }else{
                 sendMessage(firebaseUser!!.uid,userId,message)
+                binding.etMessage.setText("")
             }
         }
 
+        readMessage(firebaseUser!!.uid,userId)
     }
 
     private fun sendMessage(senderId:String, receiverId:String,message:String){
@@ -78,5 +89,34 @@ class ChatActivity : AppCompatActivity() {
 
         reference!!.child("Chat").push().setValue(hashMap)
 
+
+    }
+
+    fun readMessage(senderId: String, receiverId: String) {
+        val databaseReference: DatabaseReference =
+            FirebaseDatabase.getInstance().getReference("Chat")
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                chatList.clear()
+                for (dataSnapShot: DataSnapshot in snapshot.children) {
+                    val chat = dataSnapShot.getValue(Chat::class.java)
+
+                    if (chat!!.senderId.equals(senderId) && chat!!.receiverId.equals(receiverId) ||
+                        chat!!.senderId.equals(receiverId) && chat!!.receiverId.equals(senderId)
+                    ) {
+                        chatList.add(chat)
+                    }
+                }
+
+                val chatAdapter = ChatAdapter(this@ChatActivity, chatList)
+
+                binding.chatRecyclerView.adapter = chatAdapter
+            }
+        })
     }
 }
