@@ -1,20 +1,21 @@
 package com.example.chatapp.activity
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.adapter.UserAdapter
-import com.example.chatapp.databinding.ActivityLoginBinding
 import com.example.chatapp.databinding.ActivityUsersBinding
+import com.example.chatapp.firebase.FirebaseService
 import com.example.chatapp.model.User
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -22,6 +23,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 
 class UsersActivity : AppCompatActivity() {
     var userList = ArrayList<User>()
@@ -31,6 +34,11 @@ class UsersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        FirebaseService.sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+            FirebaseService.token = it.token
+        }
 
         binding.userRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
@@ -72,7 +80,12 @@ class UsersActivity : AppCompatActivity() {
 
     fun getUserList(){
         val firebase: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
+
+        var userid = firebase.uid
+        FirebaseMessaging.getInstance().subscribeToTopic("/topics/$userid")
+
         var databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("users")
+
         databaseReference.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 userList.clear()
@@ -86,7 +99,7 @@ class UsersActivity : AppCompatActivity() {
                 for(dataSnapShot:DataSnapshot in snapshot.children){
                     val user = dataSnapShot.getValue(User::class.java)
                     if(!user!!.userId.equals(firebase.uid)){
-                        userList.add(user)
+                       userList.add(user)
                     }
                 }
 

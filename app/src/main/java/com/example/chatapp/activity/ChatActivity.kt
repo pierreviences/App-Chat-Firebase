@@ -47,6 +47,7 @@ class ChatActivity : AppCompatActivity() {
 
         val intent = getIntent()
         val userId = intent.getStringExtra("userId")
+        val userName = intent.getStringExtra("userName")
         firebaseUser = FirebaseAuth.getInstance().currentUser
         reference = FirebaseDatabase.getInstance().getReference("users").child(userId!!)
 
@@ -82,8 +83,8 @@ class ChatActivity : AppCompatActivity() {
             }else{
                 sendMessage(firebaseUser!!.uid,userId,message)
                 binding.etMessage.setText("")
-                topic = "topics/$userId"
-                PushNotification(NotificationData(firebaseUser!!.displayName!!, message),
+                topic = "/topics/$userId"
+                PushNotification(NotificationData(userName!!, message),
                     topic).also{
                         sendNotification(it)
                 }
