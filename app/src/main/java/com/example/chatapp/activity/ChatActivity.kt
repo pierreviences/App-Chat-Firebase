@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.databinding.ActivityChatBinding
 import com.example.chatapp.databinding.ActivityUsersBinding
+import com.example.chatapp.model.Chat
 import com.example.chatapp.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -22,6 +23,8 @@ class ChatActivity : AppCompatActivity() {
     var firebaseUser: FirebaseUser? = null
     var reference : DatabaseReference? = null
     private lateinit var binding: ActivityChatBinding
+
+    var chatList = ArrayList<Chat>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)

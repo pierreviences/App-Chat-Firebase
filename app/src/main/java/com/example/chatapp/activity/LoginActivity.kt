@@ -20,9 +20,10 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        firebaseUser = auth.currentUser!!
 
-        if (firebaseUser != null) {
+        // ntr dicomment
+        if (auth != null) {
+            firebaseUser = auth.currentUser!!
             val intent = Intent(this@LoginActivity, UsersActivity::class.java)
             startActivity(intent)
             finish()
